@@ -1,4 +1,6 @@
 import random
+import time
+from matplotlib import pyplot as plt
 from numpy.random import choice
 #################### Get Input ####################
 with open('input.txt', 'r') as f:
@@ -9,12 +11,13 @@ with open('input.txt', 'r') as f:
         x = (f.readline()).split(" ")
         GoodsAndPrices.append([int(x[0]), int(x[1])])
 #################### Get Input ####################
-    print(GoodsAndPrices)
-    print("---------------------- Inputs ----------------------")
+    # print(GoodsAndPrices)
+    # print("---------------------- Inputs ----------------------")
 ######## Make the random first population #########
     PrimaryPopulationNumber = int(f.readline())
     PrimaryPopulation = []
 f.close()
+start_time = time.time()
 GoodsAndPricesCopy = []
 for i in range(0, NumberOfGoods):
     GoodsAndPricesCopy.append(GoodsAndPrices[i])
@@ -31,11 +34,13 @@ for i in range(0, PrimaryPopulationNumber):
     for i in range(0, NumberOfGoods):
         GoodsAndPricesCopy.append(GoodsAndPrices[i])
 ######## Make the random first population #########
-print(PrimaryPopulation)
-print("---------------- Primary Population ----------------")
+# print(PrimaryPopulation)
+# print("---------------- Primary Population ----------------")
 ################# 0 & 1 Converter #################
 def Converter(NTCTFL):
-    out = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    out = []
+    for i in range(0, NumberOfGoods):
+        out.append(0)
     for i in range(0, len(NTCTFL)):
         for j in range(0, NumberOfGoods):
             if NTCTFL[i] == GoodsAndPrices[j]:
@@ -57,7 +62,7 @@ def Evaluation(good):
     for i in range(0, len(good)):
         price = price + good[i][1]
         sum = sum + good[i][0]
-        if sum > 165:
+        if sum > capacityOfBag:
             price = 0
             break
     return price
@@ -87,8 +92,8 @@ def DeleteRP(goods):
         i = i + 1
     return goods
 ############### Evaluation Function ###############
-print(PrimaryPopulation[0])
-print(Converter(PrimaryPopulation[0]))
+# print(PrimaryPopulation[0])
+# print(Converter(PrimaryPopulation[0]))
 ##################### Mating ######################
 def Mating(Mom, Dad):
     ml = []
@@ -121,6 +126,34 @@ def Mating(Mom, Dad):
     l.append(ConvertBack(p1))
     l.append(ConvertBack(p2))
     return l
+################ Genetic mutation #################
+def Mutation(Children):
+    for i in range(0, len(Children)):
+        k = random.uniform(0, 10)
+        child = Converter(Children[i])
+        if k < 3:
+            m = random.randint(0, 9)
+            if child[m] == 0:
+                child[m] == 1
+                sum = 0
+                for j in range(0, NumberOfGoods):
+                    if child[j] == 1:
+                        sum = sum + GoodsAndPrices[j][0]
+                if sum > capacityOfBag:
+                    child[m] = 0
+            else:
+                child[m] == 0
+        Children[i] = ConvertBack(child)
+    return Children
+################ Genetic mutation #################
+##################### average #####################
+def average(x):
+    x2 = EvaluationAll(x)
+    sum = 0
+    for i in range(0, len(x2)):
+        sum = sum + x2[i]
+    return sum/len(x2)
+##################### average #####################
 ##################### Mating ######################
 sum = 0.0
 ChoosingParents = []
@@ -128,6 +161,8 @@ ChoosingParentss = []
 poss=[]
 Children = []
 NumberToDelete = 0
+Avr = []
+mx = []
 for z in range(0, 1000):
     sum = 0
     poss.clear()
@@ -135,8 +170,11 @@ for z in range(0, 1000):
     ChoosingParents.clear()
     # evaluate
     values = EvaluationAll(PrimaryPopulation)
+    # print(PrimaryPopulation)
+    # print(values)
     for i in range(0, len(values)):
         sum = sum + values[i]
+    # print(sum)
     for i in range(0, len(values)):
         poss.append((values[i]) / sum)
     q = []
@@ -148,7 +186,7 @@ for z in range(0, 1000):
     # choose parents
     # mating
     i = 0
-    print(len(ChoosingParents))
+    # print(len(ChoosingParents))
     while i < len(ChoosingParents):
         TwoChildren = Mating(ChoosingParents[i], ChoosingParents[i + 1])
         Children.append(TwoChildren[0])
@@ -157,9 +195,16 @@ for z in range(0, 1000):
         i = i + 2
     i = 0
     # mating
+    # Genetic mutation
+    Children2 = Mutation(Children)
+    # Children.clear()
+    # for ii in range(0, len(Children)):
+    #     Children.append(Children2[ii])
+    # Genetic mutation
     # add to primary population
-    for i in range(0, len(Children)):
-        PrimaryPopulation.append(Children[i])
+    for i in range(0, len(Children2)):
+        PrimaryPopulation.append(Children2[i])
+    Children2.clear()
     # add to primary population
     # delete the old generation
     if z >= 1:
@@ -169,8 +214,8 @@ for z in range(0, 1000):
             PNT = len(PrimaryPopulation)
     # delete the old generation
     print("--------------------------------")
-    print(len(PrimaryPopulation))
     print(max(EvaluationAll(PrimaryPopulation)))
+    print("--- %s seconds ---" % (time.time() - start_time))
     k = max(EvaluationAll(PrimaryPopulation))
     x=0
     for b in range(0, len(PrimaryPopulation)):
@@ -178,4 +223,9 @@ for z in range(0, 1000):
             x=b
             break
     print(PrimaryPopulation[x])
+    print(Converter(PrimaryPopulation[x]))
+    print(average(PrimaryPopulation))
+    Avr.append(average(PrimaryPopulation))
     print("--------------------------------")
+plt.plot(Avr)
+plt.show()
