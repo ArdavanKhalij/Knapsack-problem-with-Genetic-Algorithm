@@ -2,10 +2,28 @@ import random
 import time
 from matplotlib import pyplot as plt
 from numpy.random import choice
+from tkinter import *
+from tkinter import ttk
+###################################################
+root = Tk()
+root.title("تمرین اوّل هوش محاسباتی")
+space = Label(root, text=" ")
+space1 = Label(root, text=" ")
+space2 = Label(root, text=" ")
+space3 = Label(root, text=" ")
+space4 = Label(root, text=" ")
+space5 = Label(root, text=" ")
+space6 = Label(root, text=" ")
+title = Label(root, text="تمرین اوّل هوش محاسباتی اردوان خلیج", font=('IRANYekan', '22'))
+z1 = "ظرفیت کوله پشتی: "
+g1 = "تعداد تکرار نسل: "
 #################### Get Input ####################
 with open('input.txt', 'r') as f:
     capacityOfBag = int(f.readline())
+    zarfiat = Label(root, text=z1 + str(capacityOfBag), font=('IRANYekan', '20'))
     NumberOfGoods = int(f.readline())
+    Generation = int(f.readline())
+    Genera = Label(root, text=g1 + str(Generation), font=('IRANYekan', '20'))
     GoodsAndPrices = []
     for i in range(0,NumberOfGoods):
         x = (f.readline()).split(" ")
@@ -17,6 +35,10 @@ with open('input.txt', 'r') as f:
     PrimaryPopulationNumber = int(f.readline())
     PrimaryPopulation = []
 f.close()
+p1 = "تعداد جمعیت اوّلیه: "
+pp = Label(root, text=p1 + str(PrimaryPopulationNumber), font=('IRANYekan', '20'))
+l1 = "ورودی: "
+ll = Label(root, text=l1 + str(GoodsAndPrices), font=('IRANYekan', '20'))
 start_time = time.time()
 GoodsAndPricesCopy = []
 for i in range(0, NumberOfGoods):
@@ -163,7 +185,7 @@ Children = []
 NumberToDelete = 0
 Avr = []
 mx = []
-for z in range(0, 1000):
+for z in range(0, Generation):
     sum = 0
     poss.clear()
     Children.clear()
@@ -209,7 +231,7 @@ for z in range(0, 1000):
     # delete the old generation
     if z >= 1:
         PNT = len(PrimaryPopulation)
-        while PNT > PrimaryPopulationNumber:
+        while PNT > 2*PrimaryPopulationNumber:
             PrimaryPopulation.pop(0)
             PNT = len(PrimaryPopulation)
     # delete the old generation
@@ -228,4 +250,17 @@ for z in range(0, 1000):
     Avr.append(average(PrimaryPopulation))
     print("--------------------------------")
 plt.plot(Avr)
+space.pack()
+title.pack()
+space1.pack()
+space2.pack()
+zarfiat.pack()
+space3.pack()
+Genera.pack()
+space4.pack()
+pp.pack()
+space5.pack()
+ll.pack()
+space6.pack()
+root.mainloop()
 plt.show()
