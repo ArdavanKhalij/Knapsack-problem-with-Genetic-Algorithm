@@ -185,7 +185,8 @@ for z in range(0, Generation):
     ChoosingParents.clear()
     # evaluate
     values = EvaluationAll(PrimaryPopulation)
-    Avr.append(average(values))
+    if(z>4):
+        Avr.append(average(values))
     for i in range(0, len(values)):
         Sum = Sum + values[i]
     # print(Sum)
