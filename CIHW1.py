@@ -14,6 +14,9 @@ space3 = Label(root, text=" ")
 space4 = Label(root, text=" ")
 space5 = Label(root, text=" ")
 space6 = Label(root, text=" ")
+space7 = Label(root, text=" ")
+space8 = Label(root, text=" ")
+space9 = Label(root, text=" ")
 title = Label(root, text="تمرین اوّل هوش محاسباتی اردوان خلیج", font=('IRANYekan', '22'))
 z1 = "ظرفیت کوله پشتی: "
 g1 = "تعداد تکرار نسل: "
@@ -25,6 +28,7 @@ with open('input.txt', 'r') as f:
     Generation = int(f.readline())
     MutationRate = int(f.readline())
     Genera = Label(root, text=g1 + str(Generation), font=('IRANYekan', '20'))
+    Mut = Label(root, text="نرخ جهش" + str(MutationRate*10)+"%", font=('IRANYekan', '20'))
     GoodsAndPrices = []
     for i in range(0,NumberOfGoods):
         x = (f.readline()).split(" ")
@@ -36,6 +40,17 @@ with open('input.txt', 'r') as f:
 f.close()
 p1 = "تعداد جمعیت اوّلیه: "
 pp = Label(root, text=p1 + str(PrimaryPopulationNumber), font=('IRANYekan', '20'))
+cols = ('وزن', 'ارزش')
+listBoxxxx = ttk.Treeview(root, columns=cols, show='headings')
+vsb = ttk.Scrollbar(orient="vertical", command=listBoxxxx.yview)
+listBoxxxx.configure(yscrollcommand=vsb.set)
+listBoxxxx.column("0", width=450, anchor="c")
+listBoxxxx.column("1", width=450, anchor="c")
+listBoxxxx.config(height=10)
+for col in cols:
+    listBoxxxx.heading(col, text=col)
+for i in range(0, NumberOfGoods):
+    listBoxxxx.insert("", "end", values=(str(GoodsAndPrices[i][0]),str(GoodsAndPrices[i][1])))
 l1 = "ورودی: "
 ll = Label(root, text=l1 + str(GoodsAndPrices), font=('IRANYekan', '20'))
 start_time = time.time()
@@ -228,7 +243,7 @@ for b in range(0, len(PrimaryPopulation)):
         x=b
         break
 end1 = Label(root, text="__________________________________________________________", font=('IRANYekan', '20'))
-ans1 = Label(root, text="Answer: "+str(PrimaryPopulation[x]), font=('IRANYekan', '20'))
+ans1 = Label(root, text="Answer: "+str(PrimaryPopulation[x]), font=('IRANYekan', '18'))
 ans2 = Label(root, text="Answer: "+str(Converter(PrimaryPopulation[x])), font=('IRANYekan', '20'))
 ans3 = Label(root, text="Maximum Value: "+str(Evaluation(PrimaryPopulation[x])), font=('IRANYekan', '20'))
 ans4 = Label(root, text="Average: "+str(average(values)), font=('IRANYekan', '20'))
@@ -238,15 +253,17 @@ plt.plot(Avr)
 space.pack()
 title.pack()
 space1.pack()
-space2.pack()
+# space2.pack()
 zarfiat.pack()
-space3.pack()
+# space3.pack()
 Genera.pack()
-space4.pack()
+# space4.pack()
+Mut.pack()
+# space5.pack()
 pp.pack()
-space5.pack()
-ll.pack()
-space6.pack()
+# space5.pack()
+listBoxxxx.pack()
+# space6.pack()
 end1.pack()
 ans1.pack()
 ans2.pack()
