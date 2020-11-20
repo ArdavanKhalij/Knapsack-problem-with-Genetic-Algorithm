@@ -29,8 +29,6 @@ with open('input.txt', 'r') as f:
         x = (f.readline()).split(" ")
         GoodsAndPrices.append([int(x[0]), int(x[1])])
 #################### Get Input ####################
-    # print(GoodsAndPrices)
-    # print("---------------------- Inputs ----------------------")
 ######## Make the random first population #########
     PrimaryPopulationNumber = int(f.readline())
     PrimaryPopulation = []
@@ -45,24 +43,23 @@ for i in range(0, NumberOfGoods):
     GoodsAndPricesCopy.append(GoodsAndPrices[i])
 for i in range(0, PrimaryPopulationNumber):
     PrimaryPopulation.append([])
-    sum = 0
-    while sum <= capacityOfBag:
+    Sum = 0
+    while Sum <= capacityOfBag:
         k = random.choice(GoodsAndPricesCopy)
-        if sum + k[0] >capacityOfBag:
+        if Sum + k[0] >capacityOfBag:
             break
         PrimaryPopulation[i].append(k)
         GoodsAndPricesCopy.remove(k)
-        sum = sum + k[0]
+        Sum = Sum + k[0]
     for i in range(0, NumberOfGoods):
         GoodsAndPricesCopy.append(GoodsAndPrices[i])
 ######## Make the random first population #########
-# print(PrimaryPopulation)
-# print("---------------- Primary Population ----------------")
 ################# 0 & 1 Converter #################
+def zerolistmaker(n):
+    listofzeros = [0] * n
+    return listofzeros
 def Converter(NTCTFL):
-    out = []
-    for i in range(0, NumberOfGoods):
-        out.append(0)
+    out = zerolistmaker(NumberOfGoods)
     for i in range(0, len(NTCTFL)):
         for j in range(0, NumberOfGoods):
             if NTCTFL[i] == GoodsAndPrices[j]:
@@ -80,11 +77,11 @@ def ConvertBack(NTCTFL):
 ############### Evaluation Function ###############
 def Evaluation(good):
     price = 0
-    sum = 0
+    Sum = 0
     for i in range(0, len(good)):
         price = price + good[i][1]
-        sum = sum + good[i][0]
-        if sum > capacityOfBag:
+        Sum = Sum + good[i][0]
+        if Sum > capacityOfBag:
             price = 0
             break
     return price
@@ -93,36 +90,17 @@ def EvaluationAll(goods):
     for i in range(0, len(goods)):
         values.append(Evaluation(goods[i]))
     return values
-def Repeat(good):
-    _size = len(good)
-    repeated = []
-    for i in range(_size):
-        k = i + 1
-        for j in range(k, _size):
-            if good[i] == good[j] and good[i] not in repeated:
-                repeated.append(good[i])
-    return repeated
-def DeleteRP(goods):
-    i=0
-    k2=len(goods)
-    while i < k2:
-        if len(Repeat(goods[i])) > 0:
-            kk=goods[i]
-            goods.remove(kk)
-            k2=k2-1
-            i=i-1
-        i = i + 1
-    return goods
 ############### Evaluation Function ###############
 # print(PrimaryPopulation[0])
 # print(Converter(PrimaryPopulation[0]))
 ##################### Mating ######################
 def Mating(Mom, Dad):
-    ml = []
+    # ml = []
     Mom2 = Converter(Mom)
     Dad2 = Converter(Dad)
-    for i in range(0, NumberOfGoods):
-        ml.append(i)
+    # for i in range(0, NumberOfGoods):
+    #     ml.append(i)
+    ml = list(range(0, NumberOfGoods))
     k1 = random.choice(ml)
     ml.remove(k1)
     k2 = random.choice(ml)
@@ -157,11 +135,11 @@ def Mutation(Children):
             m = random.randint(0, 9)
             if child[m] == 0:
                 child[m] == 1
-                sum = 0
+                Sum = 0
                 for j in range(0, NumberOfGoods):
                     if child[j] == 1:
-                        sum = sum + GoodsAndPrices[j][0]
-                if sum > capacityOfBag:
+                        Sum = Sum + GoodsAndPrices[j][0]
+                if Sum > capacityOfBag:
                     child[m] = 0
             else:
                 child[m] == 0
@@ -170,14 +148,13 @@ def Mutation(Children):
 ################ Genetic mutation #################
 ##################### average #####################
 def average(x):
-    x2 = EvaluationAll(x)
-    sum = 0
-    for i in range(0, len(x2)):
-        sum = sum + x2[i]
-    return sum/len(x2)
+    Sum = 0
+    for i in range(0, len(x)):
+        Sum = Sum + x[i]
+    return Sum/len(x)
 ##################### average #####################
 ##################### Mating ######################
-sum = 0.0
+Sum = 0.0
 ChoosingParents = []
 ChoosingParentss = []
 poss=[]
@@ -186,22 +163,19 @@ NumberToDelete = 0
 Avr = []
 mx = []
 for z in range(0, Generation):
-    sum = 0
+    Sum = 0
     poss.clear()
     Children.clear()
     ChoosingParents.clear()
     # evaluate
     values = EvaluationAll(PrimaryPopulation)
-    # print(PrimaryPopulation)
-    # print(values)
+    Avr.append(average(values))
     for i in range(0, len(values)):
-        sum = sum + values[i]
-    # print(sum)
+        Sum = Sum + values[i]
+    # print(Sum)
     for i in range(0, len(values)):
-        poss.append((values[i]) / sum)
-    q = []
-    for j in range(0, len(PrimaryPopulation)):
-        q.append(j)
+        poss.append((values[i]) / Sum)
+    q = list(range(0, len(PrimaryPopulation)))
     for i in range(0, PrimaryPopulationNumber):
         draw = choice(q, 1, p=poss)
         ChoosingParents.append(PrimaryPopulation[draw[0]])
@@ -219,10 +193,6 @@ for z in range(0, Generation):
     # mating
     # Genetic mutation
     Children2 = Mutation(Children)
-    # Children.clear()
-    # for ii in range(0, len(Children)):
-    #     Children.append(Children2[ii])
-    # Genetic mutation
     # add to primary population
     for i in range(0, len(Children2)):
         PrimaryPopulation.append(Children2[i])
@@ -235,20 +205,34 @@ for z in range(0, Generation):
             PrimaryPopulation.pop(0)
             PNT = len(PrimaryPopulation)
     # delete the old generation
-    print("--------------------------------")
-    print(max(EvaluationAll(PrimaryPopulation)))
-    print("--- %s seconds ---" % (time.time() - start_time))
-    k = max(EvaluationAll(PrimaryPopulation))
-    x=0
-    for b in range(0, len(PrimaryPopulation)):
-        if Evaluation(PrimaryPopulation[b]) == k:
-            x=b
-            break
-    print(PrimaryPopulation[x])
-    print(Converter(PrimaryPopulation[x]))
-    print(average(PrimaryPopulation))
-    Avr.append(average(PrimaryPopulation))
-    print("--------------------------------")
+    # print("--------------------------------")
+    # print(max(EvaluationAll(PrimaryPopulation)))
+    # print("--- %s seconds ---" % (time.time() - start_time))
+    # k = max(EvaluationAll(PrimaryPopulation))
+    # x=0
+    # for b in range(0, len(PrimaryPopulation)):
+    #     if Evaluation(PrimaryPopulation[b]) == k:
+    #         x=b
+    #         break
+    # print(PrimaryPopulation[x])
+    # print(Converter(PrimaryPopulation[x]))
+    # print(average(PrimaryPopulation))
+    # Avr.append(average(PrimaryPopulation))
+    # print("--------------------------------")
+EndTime = (time.time() - start_time)
+k = max(EvaluationAll(PrimaryPopulation))
+x=0
+for b in range(0, len(PrimaryPopulation)):
+    if Evaluation(PrimaryPopulation[b]) == k:
+        x=b
+        break
+end1 = Label(root, text="__________________________________________________________", font=('IRANYekan', '20'))
+ans1 = Label(root, text="Answer: "+str(PrimaryPopulation[x]), font=('IRANYekan', '20'))
+ans2 = Label(root, text="Answer: "+str(Converter(PrimaryPopulation[x])), font=('IRANYekan', '20'))
+ans3 = Label(root, text="Maximum Value: "+str(Evaluation(PrimaryPopulation[x])), font=('IRANYekan', '20'))
+ans4 = Label(root, text="Average: "+str(average(values)), font=('IRANYekan', '20'))
+ans5 = Label(root, text="Time: "+str(EndTime)+" Seconds", font=('IRANYekan', '20'))
+end2 = Label(root, text="__________________________________________________________", font=('IRANYekan', '20'))
 plt.plot(Avr)
 space.pack()
 title.pack()
@@ -262,5 +246,12 @@ pp.pack()
 space5.pack()
 ll.pack()
 space6.pack()
+end1.pack()
+ans1.pack()
+ans2.pack()
+ans3.pack()
+ans4.pack()
+ans5.pack()
+end2.pack()
 root.mainloop()
 plt.show()
