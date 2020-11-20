@@ -23,6 +23,7 @@ with open('input.txt', 'r') as f:
     zarfiat = Label(root, text=z1 + str(capacityOfBag), font=('IRANYekan', '20'))
     NumberOfGoods = int(f.readline())
     Generation = int(f.readline())
+    MutationRate = int(f.readline())
     Genera = Label(root, text=g1 + str(Generation), font=('IRANYekan', '20'))
     GoodsAndPrices = []
     for i in range(0,NumberOfGoods):
@@ -131,7 +132,7 @@ def Mutation(Children):
     for i in range(0, len(Children)):
         k = random.uniform(0, 10)
         child = Converter(Children[i])
-        if k < 3:
+        if k < MutationRate:
             m = random.randint(0, 9)
             if child[m] == 0:
                 child[m] == 1
